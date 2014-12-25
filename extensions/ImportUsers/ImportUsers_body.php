@@ -124,11 +124,15 @@ class SpecialImportUsers extends SpecialPage {
 			if ( !isset( $newuserarray[3] ) ) {
 				$newuserarray[3] = '';
 			}
+			if ( !isset( $newuserarray[4] ) ) {
+				$newuserarray[4] = '';
+			}
+			
 			$nextUser = User::newFromName( $newuserarray[0] );
 			$nextUser->setEmail( $newuserarray[2] );
 			$nextUser->setRealName( $newuserarray[3] );
-			$nextUser->setAirLineCode( $newuserarray[4] );
-			$nextUser->setLocation( $newuserarray[5] );
+			$nextUser->setAirLocation( $newuserarray[5] );
+			$nextUser->setLocation( $newuserarray[6] );
 			$uid = $nextUser->idForName();
 			if ( $uid === 0 ) {
 				$nextUser->addToDatabase();

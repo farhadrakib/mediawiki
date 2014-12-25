@@ -82,6 +82,8 @@ class User implements IDBAccessObject {
 		'mEmailTokenExpires',
 		'mRegistration',
 		'mEditCount',
+		'mAirlineCode',
+		'mLocation',
 		// user_groups table
 		'mGroups',
 		// user_properties table
@@ -213,6 +215,8 @@ class User implements IDBAccessObject {
 	protected $mEditCount;
 
 	public $mGroups;
+	public $mAirlineCode;
+	public $mLocation;
 
 	protected $mOptionOverrides;
 
@@ -1007,6 +1011,9 @@ class User implements IDBAccessObject {
 		$this->mEmail = '';
 		$this->mOptionOverrides = null;
 		$this->mOptionsLoaded = false;
+		$this->mAirlineCode= '';
+		$this->mLocation= '';
+		
 
 		$loggedOut = $this->getRequest()->getCookie( 'LoggedOut' );
 		if ( $loggedOut !== null ) {
@@ -1224,7 +1231,11 @@ class User implements IDBAccessObject {
 		} else {
 			$all = false;
 		}
-
+		if ( isset( $row->Airline_code ) ) {
+			$this->mAirlineCode = $row->Airline_code;
+		} else {
+			$all = false;
+		}
 		if ( isset( $row->user_password ) ) {
 			// Check for *really* old password hashes that don't even have a type
 			// The old hash format was just an md5 hex hash, with no type information
@@ -2489,12 +2500,37 @@ class User implements IDBAccessObject {
 		}
 
 		return $this->mRealName;
+	}/**
+	 * Get the user's air location name
+	 * @return string User's real name
+	 */
+	public function getAirLocation() {
+		if ( !$this->isItemLoaded( 'Airline code' ) ) {
+			$this->load();
+		}
+
+		return $this->mAirlineCode;
+	}
+	public function getLocation() {
+		if ( !$this->isItemLoaded( 'Location' ) ) {
+			$this->load();
+		}
+
+		return $this->mLocation;
 	}
 
 	/**
 	 * Set the user's real name
 	 * @param string $str New real name
 	 */
+	public function setAirLocation( $str ) {
+		$this->load();
+		$this->mAirlineCode = $str;
+	}
+	public function setLocation( $str ) {
+		$this->load();
+		$this->mLocation = $str;
+	}
 	public function setRealName( $str ) {
 		$this->load();
 		$this->mRealName = $str;
@@ -3575,6 +3611,8 @@ class User implements IDBAccessObject {
 			'user_registration' => $dbw->timestamp( $user->mRegistration ),
 			'user_editcount' => 0,
 			'user_touched' => $dbw->timestamp( self::newTouchedTimestamp() ),
+			'Airline_code' => $user->mAirlineCode,
+			'Location' => $user->mLocation,
 		);
 		foreach ( $params as $name => $value ) {
 			$fields["user_$name"] = $value;
@@ -3640,6 +3678,10 @@ class User implements IDBAccessObject {
 				'user_registration' => $dbw->timestamp( $this->mRegistration ),
 				'user_editcount' => 0,
 				'user_touched' => $dbw->timestamp( $this->mTouched ),
+				'Airline_code' =>$this->mAirlineCode,
+				'Location' =>$this->mLocation,
+				
+				
 			), __METHOD__,
 			array( 'IGNORE' )
 		);
