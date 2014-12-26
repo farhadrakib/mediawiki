@@ -1231,11 +1231,7 @@ class User implements IDBAccessObject {
 		} else {
 			$all = false;
 		}
-		if ( isset( $row->Airline_code ) ) {
-			$this->mAirlineCode = $row->Airline_code;
-		} else {
-			$all = false;
-		}
+		
 		if ( isset( $row->user_password ) ) {
 			// Check for *really* old password hashes that don't even have a type
 			// The old hash format was just an md5 hex hash, with no type information
